@@ -6,7 +6,7 @@
 /*   By: mbouthai <mbouthai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/10 00:15:51 by mbouthai          #+#    #+#             */
-/*   Updated: 2022/02/11 17:06:18 by mbouthai         ###   ########.fr       */
+/*   Updated: 2022/02/12 17:51:14 by mbouthai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,12 +60,19 @@ char	*ft_process_stash(char **stash)
 	char	*temp;
 
 	new_line = ft_index_of('\n', *stash);
-	temp = ft_substr(*stash, 0, new_line + 1);
-	line = ft_strjoin(NULL, temp);
-	free(temp);
-	temp = ft_substr(*stash, new_line + 1, BUFFER_SIZE);
-	free(*stash);
-	*stash = temp;
+	if (new_line >= 0)
+	{
+		temp = ft_substr(*stash, 0, new_line + 1);
+		line = ft_strjoin(NULL, temp);
+		free(temp);
+		*stash = ft_substr(*stash, new_line + 1, BUFFER_SIZE);
+	}
+	else
+	{
+		line = ft_substr(*stash, 0, BUFFER_SIZE);
+		free(*stash);
+		*stash = NULL;
+	}
 	return (line);
 }	
 
@@ -74,7 +81,12 @@ char	*get_next_line(int fd)
 	static char	*stash;
 
 	stash = ft_fill_stash(fd, stash);
-	if (!stash || !*stash)
+	if (!stash)
 		return (NULL);
+	if (!*stash)
+	{
+		free(stash);
+		return (NULL);
+	}
 	return (ft_process_stash(&stash));
 }

@@ -3,7 +3,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-void	println(int fd)
+void	printlns(int fd)
 {
 	char	*str = get_next_line(fd);
 	int index = 0;
@@ -15,10 +15,16 @@ void	println(int fd)
 	}
 }
 
+void	println(int fd)
+{
+	printf("%s", get_next_line(fd));
+}
+
 int	main()
 {
 	int fd = open("41_no_nl", O_RDONLY);
 
+	println(fd);
 	println(fd);
 	close(fd);
 	return (0);
