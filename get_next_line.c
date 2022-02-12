@@ -6,7 +6,7 @@
 /*   By: mbouthai <mbouthai@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/10 00:15:51 by mbouthai          #+#    #+#             */
-/*   Updated: 2022/02/12 17:51:14 by mbouthai         ###   ########.fr       */
+/*   Updated: 2022/02/12 21:11:01 by mbouthai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,33 +53,52 @@ char	*ft_fill_stash(int fd, char *stash)
 	return (stash);
 }
 
-char	*ft_process_stash(char **stash)
+char	*ft_extract_line(char *stash)
 {
-	int	new_line;
 	char	*line;
 	char	*temp;
+	int	new_line;
 
-	new_line = ft_index_of('\n', *stash);
+	if (!stash)
+		return (NULL);
+	new_line = ft_index_of('\n', stash);
 	if (new_line >= 0)
 	{
-		temp = ft_substr(*stash, 0, new_line + 1);
+		temp = ft_substr(stash, 0, new_line + 1);
 		line = ft_strjoin(NULL, temp);
 		free(temp);
-		*stash = ft_substr(*stash, new_line + 1, BUFFER_SIZE);
 	}
 	else
-	{
-		line = ft_substr(*stash, 0, BUFFER_SIZE);
-		free(*stash);
-		*stash = NULL;
-	}
+		line = ft_strjoin(NULL, stash);
 	return (line);
+}
+
+char	*ft_process_stash(char *stash)
+{
+	char	*temp;
+	int	new_line;
+
+	if (!stash)
+		return (NULL);
+	new_line = ft_index_of('\n', stash);
+	if (new_line < 0)
+	{
+		free(stash);
+		return (NULL);
+	}
+	temp = ft_substr(stash, new_line + 1, ft_strlen(stash));
+	free(stash);
+	stash = temp;
+	return (stash);
 }	
 
 char	*get_next_line(int fd)
 {
 	static char	*stash;
+	char		*line;
 
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
 	stash = ft_fill_stash(fd, stash);
 	if (!stash)
 		return (NULL);
@@ -88,5 +107,7 @@ char	*get_next_line(int fd)
 		free(stash);
 		return (NULL);
 	}
-	return (ft_process_stash(&stash));
+	line = ft_extract_line(stash);
+	stash = ft_process_stash(stash);
+	return (line);
 }
