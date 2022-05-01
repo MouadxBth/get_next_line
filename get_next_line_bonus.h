@@ -6,7 +6,7 @@
 /*   By: mbouthai <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/20 12:12:04 by mbouthai          #+#    #+#             */
-/*   Updated: 2022/02/20 12:12:06 by mbouthai         ###   ########.fr       */
+/*   Updated: 2022/05/01 15:27:10 by mbouthai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ char	*ft_substr(char const *str, unsigned int start, size_t len);
 char	*ft_strjoin(char *s1, char *s2);
 
 int		ft_find(char c, char *str);
-char	*ft_fill_stash(int fd, char *stash);
-char	*ft_extract_line(char *stash);
-char	*ft_process_stash(char *stash);
+char	*ft_fill_stash(int fd, char *stash, int *new_line);
+char	*ft_extract_line(char *stash, int new_line);
+char	*ft_process_stash(char *stash, int new_line);
 
 char	*get_next_line(int fd);
 

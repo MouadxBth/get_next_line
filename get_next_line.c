@@ -6,7 +6,7 @@
 /*   By: mbouthai <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/20 12:10:13 by mbouthai          #+#    #+#             */
-/*   Updated: 2022/02/20 12:10:19 by mbouthai         ###   ########.fr       */
+/*   Updated: 2022/05/01 15:24:52 by mbouthai         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	ft_find(char c, char *str)
 	return (-1);
 }
 
-char	*ft_fill_stash(int fd, char *stash)
+char	*ft_fill_stash(int fd, char *stash, int *new_line)
 {
 	char	*buffer;
 	ssize_t	bytes_read;
@@ -46,22 +46,21 @@ char	*ft_fill_stash(int fd, char *stash)
 			break ;
 		buffer[bytes_read] = '\0';
 		stash = ft_strjoin(stash, buffer);
-		if (ft_find('\n', buffer) >= 0)
+		*new_line = ft_find('\n', stash);
+		if (*new_line >= 0)
 			break ;
 	}
 	free(buffer);
 	return (stash);
 }
 
-char	*ft_extract_line(char *stash)
+char	*ft_extract_line(char *stash, int new_line)
 {
 	char	*line;
 	char	*temp;
-	int		new_line;
 
 	if (!stash)
 		return (NULL);
-	new_line = ft_find('\n', stash);
 	if (new_line >= 0)
 	{
 		temp = ft_substr(stash, 0, new_line + 1);
@@ -73,14 +72,12 @@ char	*ft_extract_line(char *stash)
 	return (line);
 }
 
-char	*ft_process_stash(char *stash)
+char	*ft_process_stash(char *stash, int new_line)
 {
 	char	*temp;
-	int		new_line;
 
 	if (!stash)
 		return (NULL);
-	new_line = ft_find('\n', stash);
 	if (new_line < 0)
 	{
 		free(stash);
@@ -96,10 +93,11 @@ char	*get_next_line(int fd)
 {
 	static char	*stash;
 	char		*line;
+	int			new_line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	stash = ft_fill_stash(fd, stash);
+	stash = ft_fill_stash(fd, stash, &new_line);
 	if (!stash)
 		return (NULL);
 	if (!*stash)
@@ -107,7 +105,7 @@ char	*get_next_line(int fd)
 		free(stash);
 		return (NULL);
 	}
-	line = ft_extract_line(stash);
-	stash = ft_process_stash(stash);
+	line = ft_extract_line(stash, new_line);
+	stash = ft_process_stash(stash, new_line);
 	return (line);
 }
